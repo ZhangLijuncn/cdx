@@ -25,7 +25,14 @@ platform = sys.platform
 
 locale_encoding = locale.getpreferredencoding()
 
-
+colours = {
+            'end'        :'\033[0m',
+            # 'word'         :'\033[31m',
+            'notes'    :'\033[32m',
+            'gold'   :'\033[33m',
+            'blue' :'\033[34m',
+            # 'examples_even':'\033[35m',
+        }
 
 cdxDir = '{}/.cdx'.format(homedir)
 
@@ -59,7 +66,7 @@ cdx -d bookmark                    # delete a bookmark (also --delete)""")
 
 
     def version(self):
-        return 'cdx version 1.0.1 ,  Dec 5 2017'
+        return 'cdx version 1.1.1 ,  Dec 5 2017'
 
     def save(self, bookmark, apath=None):
         "save the bookmark"
@@ -75,15 +82,17 @@ cdx -d bookmark                    # delete a bookmark (also --delete)""")
                     self._data[bookmark] = os.path.abspath(tpath)
                     self._data.close()
                     print('cdx {0} >>> {1}'.format(bookmark,tpath))
-            elif os.path.exists(apath):
+            if os.path.exists(apath):
                 self._data[bookmark] = os.path.abspath(apath)
                 self._data.close()
                 print('cdx {0} >>> {1}'.format(bookmark,apath))
-            elif 'http://' or 'https://' in apath:  # url
+            else:
                 self._data[bookmark] =  apath
                 self._data.close()
-            else:
-                print("cdx: no such file or directory: {}".format(apath))
+                if len(apath) < 46:
+                    print("notes {0} >>> {1}".format(bookmark, apath))
+                else:
+                    print("notes {0} >>> {1}...".format(bookmark, apath[:46]))
 
 
     def list_bookmarks(self):
@@ -96,7 +105,11 @@ cdx -d bookmark                    # delete a bookmark (also --delete)""")
             print("-"*70)
             print("Empty! use 'cdx -s bookmark [dirpath]' to save a bookmark.")
         for k, v in self._data.items():
-            print('{:15}    {}'.format(k, v))
+            if len(v) <= 45:
+                print('{0}{1:15}{2}    {3}{4}{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v, colours['end']))
+            else:
+                print('{0}{1:15}{2}    {3}{4}...{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[:46], colours['end']))
+                # print('{:15}    {}...'.format(k, v[:46]))
         print("-"*70)
         self._data.close()
 
@@ -106,9 +119,12 @@ cdx -d bookmark                    # delete a bookmark (also --delete)""")
 
         if bookmark in self._data.keys():
             if not self._data[bookmark].startswith('http'):
-                os.chdir(self._data[bookmark])
-                self._data.close()
-                os.system(shell)
+                if os.path.exists(self._data[bookmark]):
+                    os.chdir(self._data[bookmark])
+                    self._data.close()
+                    os.system(shell)
+                else:
+                    print(self._data[bookmark])
             else:
                 webbrowser.open(self._data[bookmark])
                 self._data.close()
