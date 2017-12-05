@@ -37,7 +37,6 @@ colours = {
 cdxDir = '{}/.cdx'.format(homedir)
 
 if sys.version[0]== '2':
-    print(sys.version)
     dbFile = '{}/database'.format(cdxDir).decode(locale_encoding)
 if sys.version[0] == '3':
     dbFile = '{}/database'.format(cdxDir)
@@ -58,15 +57,15 @@ class Cdx(object):
     def usage(self):
         print("""usage: cdx [option] [arg] ..
 Options and arguments:
-cdx -s bookmark [dirpath]          # save the CURRENT location or a [dirpath] as bookmark (also --save)
-cdx bookmark                       # cdx to a location by bookmark
-cdx -l                             # dispaly the saved bookmarks(also --list)
-cdx -m old_bookmark new_bookmark   # modify a bookmark name (also --modify)
-cdx -d bookmark                    # delete a bookmark (also --delete)""")
+cdx -s bookmark [dirpath|url|note1 note2 ..] # save the CURRENT dirpath or some notes as bookmark (also --save)
+cdx bookmark                                 # cdx to a location or retuan notes by bookmark
+cdx -l                                       # dispaly the saved bookmarks(also --list)
+cdx -m old_bookmark new_bookmark             # modify a bookmark name (also --modify)
+cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)""")
 
 
     def version(self):
-        return 'cdx version 1.1.1 ,  Dec 5 2017'
+        return 'cdx version 1.1.1 ,  Dec 6 2017'
 
     def save(self, bookmark, apath=None):
         "save the bookmark"
@@ -75,31 +74,39 @@ cdx -d bookmark                    # delete a bookmark (also --delete)""")
             self._data[bookmark] = os.path.abspath(os.getcwd())
             self._data.close()
             print('cdx {0} >>> {1}'.format(bookmark,os.getcwd()))
-        else:
-            if apath.startswith('~'):
-                tpath = apath.replace(apath[0],homedir)
+        elif len(apath)==1:
+            if apath[0].startswith('~'):
+                tpath = apath[0].replace(apath[0][0],homedir)
                 if os.path.exists(tpath):
                     self._data[bookmark] = os.path.abspath(tpath)
                     self._data.close()
                     print('cdx {0} >>> {1}'.format(bookmark,tpath))
-            if os.path.exists(apath):
-                self._data[bookmark] = os.path.abspath(apath)
+            if os.path.exists(apath[0]):
+                self._data[bookmark] = os.path.abspath(apath[0])
                 self._data.close()
-                print('cdx {0} >>> {1}'.format(bookmark,apath))
+                print('cdx {0} >>> {1}'.format(bookmark,apath[0]))
             else:
-                self._data[bookmark] =  apath
+                self._data[bookmark] =  apath[0]
                 self._data.close()
-                if len(apath) < 46:
-                    print("notes {0} >>> {1}".format(bookmark, apath))
+                if len(apath[0]) < 46:
+                    print("cdx {0} >>> {1}".format(bookmark, apath[0]))
                 else:
-                    print("notes {0} >>> {1}...".format(bookmark, apath[:46]))
+                    print("cdx {0} >>> {1}...".format(bookmark, apath[0][:46]))
+        elif len(apath)>1:
+            notes = ' '.join(apath)
+            self._data[bookmark] = notes
+            self._data.close()
+            if len(notes) < 46:
+                print("cdx {0} >>> {1}".format(bookmark, notes))
+            else:
+                print("cdx {0} >>> {1}...".format(bookmark, notes[:46]))
 
 
     def list_bookmarks(self):
         "display the paths marked"
         self._data = shelve.open(dbFile)
         print("-"*70)
-        print("{:^15}    {:^30}".format("Bookmarks", "Locations"))
+        print("{:15}    {:15}".format("Bookmarks", "Locations"))
         print("-"*70)
         if not self._data:
             print("-"*70)
@@ -108,8 +115,7 @@ cdx -d bookmark                    # delete a bookmark (also --delete)""")
             if len(v) <= 45:
                 print('{0}{1:15}{2}    {3}{4}{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v, colours['end']))
             else:
-                print('{0}{1:15}{2}    {3}{4}...{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[:46], colours['end']))
-                # print('{:15}    {}...'.format(k, v[:46]))
+                print('{0}{1:15}{2}    {3}{4}...{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[:48], colours['end']))
         print("-"*70)
         self._data.close()
 
@@ -159,24 +165,24 @@ cdx -d bookmark                    # delete a bookmark (also --delete)""")
         except:
             Cdx.list_bookmarks(self)
 
-    def dalete(self, bookmark):
+    def dalete(self, bookmarks):
         "delete bookmark"
         self._data = shelve.open(dbFile)
-        try:
-            del self._data[bookmark]
-            self._data.close()
-            print("cdx: '{}' bookmark was removed.".format(bookmark))
-        except:
-            print("Can't find the bookmark '{}' to delete.".format(bookmark))
-            Cdx.list_bookmarks(self)
+        for bk in bookmarks:
+            if bk in self._data:
+                del self._data[bk]
+                print("cdx: '{}' was removed.".format(bk))
+            else:
+                print("cdx: fail to delete '{}'.".format(bk))
+        Cdx.list_bookmarks(self)
 
     def truncate(self):
         "clear the data."
         print("Do you want to truncate the datafile?")
         if sys.version[0] == '3':
-            warning = input("y or n > ")
+            warning = input("y or n ? >  ")
         else:
-            warning = raw_input("y or n > ")
+            warning = raw_input("y or n ? >  ")
         if warning == 'y':
             os.remove(dbFile)
             self._data = shelve.open(dbFile)
@@ -192,7 +198,7 @@ def main():
     init_db()
     cdx_go = Cdx()
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hvls:d:m:t", ["help", 'version', 'list',\
+        opts, args = getopt.getopt(sys.argv[1:], "hvls:dm:t", ["help", 'version', 'list',\
         'save=', 'delete=', 'modify=', 'truncate'])
     except getopt.GetoptError as err:
         print(err)
@@ -207,21 +213,25 @@ def main():
                 if not args:
                     cdx_go.save(value)
                 else:
-                    for arg in args:
-                        cdx_go.save(value, arg)
+                    cdx_go.save(value, args)
             if name == '--save':
                 if value and not args:
                     cdx_go.save(value)
-                elif value and len(args) == 1:
-                    print('here')
-                    cdx_go.save(value, args[0])
+                elif value and args:
+                    cdx_go.save(value, args)
             sys.exit(0)
         elif name in ('-l', '--list'):
             cdx_go.list_bookmarks()
             sys.exit(0)
         elif name in ('-d'):
-            cdx_go.dalete(value)
-            sys.exit(0)
+            if args:
+                    cdx_go.dalete(args)
+                    sys.exit(0)
+            else:
+                print('Enter bookmarks to delete.')
+                print('cdx -d bookmark_1 bookmark_2 bookmark_3 ...')
+                sys.exit(1)
+
         elif name in ('-v', '--version'):
             print(cdx_go.version())
             sys.exit(0)
