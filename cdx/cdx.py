@@ -59,7 +59,7 @@ cdx -d bookmark                    # delete a bookmark (also --delete)""")
 
 
     def version(self):
-        return 'cdx version 1.0.0 ,  Dec 5 2017'
+        return 'cdx version 1.0.1 ,  Dec 5 2017'
 
     def save(self, bookmark, apath=None):
         "save the bookmark"
