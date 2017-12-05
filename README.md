@@ -1,13 +1,13 @@
 # cdx
 
 * Introduction
- * change derectory fast by 'cdx bookmark'.
+    * change derectory fast by 'cdx bookmark'.
  
  
 * Features
- * bookmark saved for dirpath or url
- * cdx a directory by bookmark fast
- * modify, dispaly, delete bookmarks
+    * bookmark saved for dirpath or url
+    * cdx a directory by bookmark fast
+    * modify, dispaly, delete bookmarks
 
 ### version
     cdx 1.1.1 , Dec 6 2017
