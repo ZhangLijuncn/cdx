@@ -1,11 +1,12 @@
 # cdx
 
 * Introduction
- * A enhanced terminal command cd.
+ * change derectory fast by 'cdx bookmark'.
+ 
  
 * Features
- * save bookmark for directory path or url
- * cdx a directory by bookmark
+ * bookmark saved for dirpath or url
+ * cdx a directory by bookmark fast
  * modify, dispaly, delete bookmarks
 
 ### version
@@ -27,7 +28,7 @@ cdx -d bookmark                           # delete a bookmark (also --delete)
 """
 
 ### Example
-    # save the current locate as 'py'
+    # save the current dirpath as 'py'
     js@py:~/Documents/pycodes$ cdx -s py
     py >>> /home/js/Documents/pycodes
     
