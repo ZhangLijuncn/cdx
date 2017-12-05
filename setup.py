@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name = "cdx",
-    version = '1.0.1',
+    version = '1.1.1',
     author = "lijun",
     author_email = 'zhanglijuncn@outlook.com',
     url = "https://github.com/ZhangLijuncn/cdx",
