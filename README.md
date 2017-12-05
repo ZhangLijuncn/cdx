@@ -10,7 +10,7 @@
  * modify, dispaly, delete bookmarks
 
 ### version
-    cdx 1.0.1 , Dec 5 2017
+    cdx 1.1.1 , Dec 6 2017
  
 ### setup
     sudo pip install cdx
@@ -18,48 +18,61 @@
     
 ### Usage
 """
-usage: cdx [option] [arg] ..
+usage: cdx [option] [arg] 
 Options and arguments:
-cdx -s bookmark [dirpath]                # save the CURRENT location or a [dirpath] as bookmark (also --save)
-cdx bookmark                              # cdx to a location by bookmark or open url with default web broswer
-cdx -l                                        # dispaly the saved bookmarks(also --list)
-cdx -m old_bookmark new_bookmark  # modify a bookmark name (also --modify)
-cdx -d bookmark                           # delete a bookmark (also --delete)
+cdx -s bookmark [dirpath|url|note1 note2 ..] # save the CURRENT dirpath or some notes as bookmark (also --save)
+cdx bookmark                                 # cdx to a location or retuan notes by bookmark
+cdx -l                                       # dispaly the saved bookmarks(also --list)
+cdx -m old_bookmark new_bookmark             # modify a bookmark name (also --modify)
+cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
 """
 
 ### Example
-    # save the current dirpath as 'py'
-    js@py:~/Documents/pycodes$ cdx -s py
-    py >>> /home/js/Documents/pycodes
+    # save the current dirpath as a bookmark 
+    js@machine:~/Documents/pycodes/myprojects$ cdx -s cdx
+    cdx cdx >>> /home/js/Documents/pycodes/myprojects
     
-    # save a directory path as 'pj'
-    js@py:~/Documents/pycodes$ cdx -s pj ./projects/
-    pj >>> ./projects/
-    
-    # save 'google' website as 'gg'
-    js@py:~/Documents/pycodes$ cdx -s gg 'http://www.google.com'
-    
-    # display the bookmarks saved
-    js@py:~/Documents/pycodes$ cdx -l
-    --------------------------------------------------
-    Bookmarks                 Locations 
-    --------------------------------------------------
-    gg                 http://www.google.com
-    pj                 /home/js/Documents/pycodes/projects
-    py                 /home/js/Documents/pycodes
-    --------------------------------------------------
-    
-    # modify the bookmark 'gg' to 'g'
-    js@py:~/Documents/pycodes$ cdx -m gg g
-    Done!
-    g >>> http://www.google.com
-    
-    # save a directory path as 'doc'
-    js@py:~/Documents/pycodes$ cdx -s doc /home/js/Documents/
-    doc >>> /home/js/Documents/
-    
-    # use the bookmark 'doc'
-    js@py:~/Documents/pycodes$ cdx doc
-    js@py:~/Documents$ 
+    # add a website
+    js@machine:~/Documents/pycodes/myprojects$ cdx -s gh https://github.com/ZhangLijuncn/cdx
+    notes gh >>> https://github.com/ZhangLijuncn/cdx
 
+    # notes some infomation 
+    js@machine:~/Documents/pycodes/myprojects$ cdx -s version v1.1.1 Dec,6,2017
+    cdx version >>> v1.1.1 Dec,6,2017
 
+    # mark a dirpath
+    js@machine:~/Documents/pycodes/myprojects$ cdx -s doc ~/Documents/
+    cdx doc >>> /home/js/Documents/
+
+    # modify a bookmark
+    js@machine:~/Documents/pycodes/myprojects$ cdx -m version v
+    cdx v >>> v1.1.1 Dec,6,2017
+
+    # display all the bookmarks
+    js@machine:~/Documents/pycodes/myprojects$ cdx -l
+    ----------------------------------------------------------------------
+    Bookmarks          Locations      
+    ----------------------------------------------------------------------
+    doc                /home/js/Documents
+    v                   v1.1.1 Dec,6,2017
+    cdx                /home/js/Documents/pycodes/myprojects
+    gh                 https://github.com/ZhangLijuncn/cdx
+    ----------------------------------------------------------------------
+
+    # change a diretory by bookmark
+    js@machine:~/Documents/pycodes/myprojects$ cdx doc
+    js@machine:~/Documents$ 
+
+    # open a url in the default web browser
+    js@machine:~/Documents$ cdx gh
+
+    # delete some bookmarks
+    js@machine:~/Documents$ cdx -d doc v cdx 
+    cdx: 'doc' was removed.
+    cdx: 'v' was removed.
+    cdx: 'cdx' was removed.
+    ----------------------------------------------------------------------
+    Bookmarks          Locations      
+    ----------------------------------------------------------------------
+    gh                 https://github.com/ZhangLijuncn/cdx
+    ----------------------------------------------------------------------
