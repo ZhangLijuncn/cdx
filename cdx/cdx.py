@@ -27,11 +27,9 @@ locale_encoding = locale.getpreferredencoding()
 
 colours = {
             'end'        :'\033[0m',
-            # 'word'         :'\033[31m',
             'notes'    :'\033[32m',
             'gold'   :'\033[33m',
             'blue' :'\033[34m',
-            # 'examples_even':'\033[35m',
         }
 
 cdxDir = '{}/.cdx'.format(homedir)
@@ -45,7 +43,7 @@ def init_db():
     if not os.path.exists(cdxDir):
         try:
             os.mkdir(cdxDir)
-        except:
+        except Exception:
             print("cdx: can not create data file.")
             sys.exit(-1)
     else:
@@ -65,7 +63,7 @@ cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
 
 
     def version(self):
-        return 'cdx version 1.1.1 ,  Dec 6 2017'
+        return 'cdx version 1.1.2 ,  Dec 6 2017'
 
     def save(self, bookmark, apath=None):
         "save the bookmark"
@@ -76,7 +74,7 @@ cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
             print('cdx {0} >>> {1}'.format(bookmark,os.getcwd()))
         elif len(apath)==1:
             if apath[0].startswith('~'):
-                tpath = apath[0].replace(apath[0][0],homedir)
+                tpath = os.path.expanduser(apath[0]) 
                 if os.path.exists(tpath):
                     self._data[bookmark] = os.path.abspath(tpath)
                     self._data.close()
@@ -110,13 +108,19 @@ cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
         print("-"*70)
         if not self._data:
             print("-"*70)
-            print("Empty! use 'cdx -s bookmark [dirpath]' to save a bookmark.")
+            print("Empty bookmark! 'cdx -s bookmark [dirpath]' to save a bookmark.")
         for k, v in self._data.items():
-            if len(v) <= 45:
-                print('{0}{1:15}{2}    {3}{4}{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v, colours['end']))
+            if platform == 'linux':
+                if len(v) <= 45:
+                    print('{0}{1:15}{2}    {3}{4}{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v, colours['end']))
+                else:
+                    print('{0}{1:15}{2}    {3}{4}...{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[:48], colours['end']))
             else:
-                print('{0}{1:15}{2}    {3}{4}...{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[:48], colours['end']))
-        print("-"*70)
+                if len(v) <= 45:
+                    print('{0:15}    {1}'.format(k, v))
+                else:
+                    print('{0:15}    {1}...'.format(k, v[48]))
+            print("-"*70)
         self._data.close()
 
     def cdx(self, bookmark):
@@ -162,9 +166,8 @@ cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
             del self._data[old_bookmark]
             print("cdx {0} >>> {1}".format(new_bookmark, self._data[new_bookmark]))
             self._data.close()
-        except:
+        except Exception:
             Cdx.list_bookmarks(self)
-
     def dalete(self, bookmarks):
         "delete bookmark"
         self._data = shelve.open(dbFile)
