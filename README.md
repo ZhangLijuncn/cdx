@@ -5,7 +5,7 @@
  
  
 * Features
-    * bookmark saved for dirpath or url
+    * dirpath or url saved as bookmark
     * cdx a directory by bookmark fast
     * modify, dispaly, delete bookmarks
 
@@ -14,7 +14,7 @@
  
 ### setup
     sudo pip install cdx
-    if fail to setup or reinstall, try again after remove '~/.cdx/database' or 'C:\User\xx\.cdx\databse'.
+    if fail to setup or update, try again use 'sudo pip3 install cdx'.
     
     
 ### Usage
