@@ -10,7 +10,7 @@
     * modify, dispaly, delete bookmarks
 
 ### version
-    cdx 1.1.2 , Dec 7 2017
+    cdx 1.2.3 , Dec 8 2017
  
 ### setup
     sudo pip install cdx
@@ -18,15 +18,13 @@
     
     
 ### Usage
-"""
-usage: cdx [option] [arg] 
-Options and arguments:
-cdx -s bookmark [dirpath|url|note1 note2 ..] # save the CURRENT dirpath or some notes as bookmark (also --save)
-cdx bookmark                                 # cdx to a location or retuan notes by bookmark
-cdx -l                                       # dispaly the saved bookmarks(also --list)
-cdx -m old_bookmark new_bookmark             # modify a bookmark name (also --modify)
-cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
-"""
+    usage: cdx [option] [arg] 
+    Options and arguments:
+    cdx -s bookmark [dirpath|url|note1 note2 ..] # save the CURRENT dirpath or some notes as bookmark (also --save)
+    cdx bookmark                                 # cdx to a location or retuan notes by bookmark
+    cdx -l                                       # dispaly the saved bookmarks(also --list)
+    cdx -m old_bookmark new_bookmark             # modify a bookmark name (also --modify)
+    cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
 
 ### Example
     # save the current dirpath as a bookmark 
