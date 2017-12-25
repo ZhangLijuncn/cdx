@@ -1,0 +1,19 @@
+v 1.0.0 Dec 4
+基础版本
+
+v 1.0.1  Dec 5
+修改小bug
+
+v 1.1.1 Dec 6
+书签批量删除
+书签列表颜色
+增加便签记录
+
+v 1.1.2  Dec 7
+优化列表排版
+一些bug
+
+v 1.2.2 Dec 255555
+增加书签分类功能, 增加日期
+data{bookmark:[content,type,time,count]}
+结构调整
