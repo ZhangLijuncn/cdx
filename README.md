@@ -10,7 +10,7 @@
     * modify, dispaly, delete bookmarks
 
 ### version
-    cdx 1.1.2 , Dec 7 2017
+    cdx 1.2.2 , Dec 25 2017
  
 ### setup
     sudo pip install cdx
