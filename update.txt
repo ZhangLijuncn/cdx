@@ -13,7 +13,11 @@ v 1.1.2  Dec 7
 优化列表排版
 一些bug
 
-v 1.2.2 Dec 255555
+v 1.2.2 Dec 25
 增加书签分类功能, 增加日期
 data{bookmark:[content,type,time,count]}
 结构调整
+
+v 1.2.3 Dec 28
+
+列表按照 path ， url， note 顺序打印

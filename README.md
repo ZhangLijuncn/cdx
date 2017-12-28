@@ -10,11 +10,7 @@
     * modify, dispaly, delete bookmarks
 
 ### version
-<<<<<<< HEAD
-    cdx 1.2.2 , Dec 25 2017
-=======
-    cdx 1.2.3 , Dec 8 2017
->>>>>>> 53553d1cfa5f3493de319031251ef99f253cec58
+    cdx 1.2.3 , Dec 28 2017
  
 ### setup
     sudo pip install cdx

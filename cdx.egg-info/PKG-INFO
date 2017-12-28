@@ -1,12 +1,11 @@
 Metadata-Version: 1.0
 Name: cdx
-Version: 1.2.2
+Version: 1.2.3
 Summary: change dirpath or open a url by bookmark fast in terminal
 Home-page: https://github.com/ZhangLijuncn/cdx
 Author: lijun
 Author-email: zhanglijuncn@outlook.com
-License: UNKNOWN
-Description-Content-Type: UNKNOWN
+License: MIT
 Description: # cdx
         
         * Introduction
@@ -14,28 +13,26 @@ Description: # cdx
          
          
         * Features
-            * bookmark saved for dirpath or url
+            * dirpath or url saved as bookmark
             * cdx a directory by bookmark fast
             * modify, dispaly, delete bookmarks
         
         ### version
-            cdx 1.2.2 , Dec 25 2017
+            cdx 1.2.3 , Dec 28 2017
          
         ### setup
             sudo pip install cdx
-            if fail to setup or reinstall, try again after remove '~/.cdx/database' or 'C:\User\xx\.cdx\databse'.
+            if fail to setup or update, try again use 'sudo pip3 install cdx'.
             
             
         ### Usage
-        """
-        usage: cdx [option] [arg] 
-        Options and arguments:
-        cdx -s bookmark [dirpath|url|note1 note2 ..] # save the CURRENT dirpath or some notes as bookmark (also --save)
-        cdx bookmark                                 # cdx to a location or retuan notes by bookmark
-        cdx -l                                       # dispaly the saved bookmarks(also --list)
-        cdx -m old_bookmark new_bookmark             # modify a bookmark name (also --modify)
-        cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
-        """
+            usage: cdx [option] [arg] 
+            Options and arguments:
+            cdx -s bookmark [dirpath|url|note1 note2 ..] # save the CURRENT dirpath or some notes as bookmark (also --save)
+            cdx bookmark                                 # cdx to a location or retuan notes by bookmark
+            cdx -l                                       # dispaly the saved bookmarks(also --list)
+            cdx -m old_bookmark new_bookmark             # modify a bookmark name (also --modify)
+            cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
         
         ### Example
             # save the current dirpath as a bookmark 

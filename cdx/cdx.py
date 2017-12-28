@@ -8,11 +8,7 @@ import getopt
 import shelve
 import webbrowser 
 import locale
-<<<<<<< HEAD
 import time
-=======
-import datetime
->>>>>>> 53553d1cfa5f3493de319031251ef99f253cec58
 
 homedir = ''
 shell = ''
@@ -68,17 +64,12 @@ cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
 
 
     def version(self):
-<<<<<<< HEAD
-        return 'cdx version 1.2.2 ,  Dec 25 2017'
-=======
-        return 'cdx version 1.1.3 ,  Dec 8 2017'
->>>>>>> 53553d1cfa5f3493de319031251ef99f253cec58
+        return 'cdx version 1.2.3 ,  Dec 28 2017'
 
     def save(self, bookmark, apath=None):
         "save the bookmark"
         date = datetime.datetime.today()
         self._data = shelve.open(dbFile)
-<<<<<<< HEAD
         if not apath:  # 如果没有提供apath值，默认保持当前目录路径。 参数apath 是个列表
             self._data[bookmark] = [os.path.abspath(os.getcwd()),'path',0, time.ctime()]
             self._data.close()
@@ -110,97 +101,47 @@ cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
         elif len(apath)>1:  # 如果 apath 参数的元素 大于1个， 则连接保存元素
             notes = ' '.join(apath)
             self._data[bookmark] = [notes, 'notes', 0, time.ctime()]
-=======
-        if not apath:
-            self._data[bookmark] = [os.path.abspath(os.getcwd()),'path',0, date]
-            self._data.close()
-            print('cdx {0} >>> {1}'.format(bookmark,os.getcwd()))
-        elif len(apath)==1:
-            if apath[0].startswith('~'):
-                tpath = os.path.expanduser(apath[0]) 
-                if os.path.exists(tpath):
-                    self._data[bookmark] = [os.path.abspath(tpath), 'path',0, date]
-                    self._data.close()
-                    print('cdx {0} >>> {1}'.format(bookmark,tpath))
-            if os.path.exists(apath[0]):
-                self._data[bookmark] = [os.path.abspath(apath[0]), 'path',0, date]
-                self._data.close()
-                print('cdx {0} >>> {1}'.format(bookmark,apath[0]))
-            
-            elif apath[0].startswith('http'):
-                self._data[bookmark] = [apath[0], 'url', 0]
-                self._data.close()
-
-            else:
-                self._data[bookmark] =  [apath[0], 'note', 0]
-                self._data.close()
-                columns =  os.get_terminal_size()[0]
-                if len(apath[0]) < columns:
-                    print("cdx {0} >>> {1}".format(bookmark, apath[0]))
-                else:
-                    print("cdx {0} >>> {1}...".format(bookmark, apath[0][:columns-18]))
-        elif len(apath)>1:
-            notes = ' '.join(apath)
-            self._data[bookmark] = [notes, 'notes', 0]
->>>>>>> 53553d1cfa5f3493de319031251ef99f253cec58
             self._data.close()
             columns =  os.get_terminal_size()[0]
             if len(notes) < columns:
                 print("cdx {0} >>> {1}".format(bookmark, notes))
             else:
-<<<<<<< HEAD
                 print("cdx {0} >>> {1}...".format(bookmark, notes[:columns-len(apath[0])-3]))
-=======
-                print("cdx {0} >>> {1}...".format(bookmark, notes[:columns-18]))
->>>>>>> 53553d1cfa5f3493de319031251ef99f253cec58
 
 
     def list_bookmarks(self):  # 展示所有保存到书签
         "display the paths marked"
         self._data = shelve.open(dbFile)
-<<<<<<< HEAD
         
         print("-"*70)
         print("{:16}    {:16}".format("Bookmarks", "Locations"))
         print("-"*70)
-=======
-        columns =  os.get_terminal_size()[0]
-        
-        print("-"*columns)
-        print("{:10}    {:10}".format("Bookmarks", "Locations"))
-        print("-"*columns)
->>>>>>> 53553d1cfa5f3493de319031251ef99f253cec58
         if not self._data:
             print("-"*columns)
             print("Empty bookmark! 'cdx -s bookmark [dirpath]' to save a bookmark.")
+        # columns =  os.get_terminal_size()[0]
+        Cdx.listEven(self,'path')
+        Cdx.listEven(self,'url')
+        Cdx.listEven(self,'note')
+        self._data.close()
+    
+
+    def listEven(self,even):
         columns =  os.get_terminal_size()[0]
         for k, v in self._data.items():
-            if platform == 'linux':
-<<<<<<< HEAD
-                if len(v[0]) <= columns-20:
-                    print('{0}{1:10}{2}    {3}{4}{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[0], colours['end']))
+            if v[1] == even:
+                if platform == 'linux':
+                    if len(v[0]) <= columns-20:
+                        print('{0}{1:10}{2}    {3}{4}{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[0], colours['end']))
+                    else:
+                        print('{0}{1:10}{2}    {3}{4}...{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[0][:(columns-20)], colours['end']))
                 else:
-                    print('{0}{1:10}{2}    {3}{4}...{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[0][:(columns-20)], colours['end']))
-            else:
-                if len(v[0]) <= columns-20:
-                    print('{0:10}    {1}'.format(k, v))
-                else:
-                    print('{0:10}    {1}...'.format(k, v[:(columns-20)]))
-=======
-            #    if not isinstance(v[0], list):
-                if len(v[0]) <= columns-14:
-                    print('{0}{1:10}{2}    {3}{4}{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[0], colours['end']))
-                else:
-                    print('{0}{1:10}{2}    {3}{4}...{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[0][:columns-17], colours['end']))
-            else:
-                if len(v[0]) <= columns-14:
-                    print('{0:10}    {1}'.format(k, v[0]))
-                else:
-                    print('{0:10}    {1}...'.format(k, v[0][:columns-17]))
+                    if len(v[0]) <= columns-20:
+                        print('{0:10}    {1}'.format(k, v))
+                    else:
+                        print('{0:10}    {1}...'.format(k, v[:(columns-20)]))
+                print("-"*columns)
 
->>>>>>> 53553d1cfa5f3493de319031251ef99f253cec58
-            print("-"*columns)
-        self._data.close()
 
     def cdx(self, bookmark):
         "cd to the location path marked"
