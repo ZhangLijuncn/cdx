@@ -21,3 +21,12 @@ data{bookmark:[content,type,time,count]}
 v 1.2.3 Dec 28
 
 列表按照 path ， url， note 顺序打印
+
+v 1.2.4 Dec 29
+fix bug
+
+v 1.2.5 Jan 5 2018
+fix bug
+
+v 1.2.6 Jan 6 2018
+优化排版

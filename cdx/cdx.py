@@ -31,6 +31,7 @@ colours = {
             'notes'    :'\033[32m',
             'gold'   :'\033[33m',
             'blue' :'\033[34m',
+            'purple': '\033[35m',
         }
 
 cdxDir = '{}/.cdx'.format(homedir)
@@ -51,24 +52,24 @@ def init_db():
         pass
 
 class Cdx(object):
-    "cdx"
+    "cdx suage, version, listbookmark, listEven, save, cdx, modify, delete, truncate"
 
     def usage(self):
         print("""usage: cdx [option] [arg] ..
 Options and arguments:
-cdx -s bookmark [dirpath|url|note1 note2 ..] # save the CURRENT dirpath or some notes as bookmark (also --save)
-cdx bookmark                                 # cdx to a location or retuan notes by bookmark
+cdx -s bookmark [dirpath|url|note1 note2 ..] # save the CURRENT dirpath or notes as a bookmark (also --save)
+cdx bookmark                                 # cdx to a location or notes by bookmark
 cdx -l                                       # dispaly the saved bookmarks(also --list)
 cdx -m old_bookmark new_bookmark             # modify a bookmark name (also --modify)
-cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)""")
+cdx -d bookmark1 bookmark2 ...               # delete bookmarks (also --delete)
+cdx -t                                       # truncate all the bookmark (also --truncate)""")
 
 
     def version(self):
-        return 'cdx version 1.2.3 ,  Dec 28 2017'
+        return 'cdx version 1.2.6 ,  Fri 6 2018'
 
     def save(self, bookmark, apath=None):
-        "save the bookmark"
-        date = datetime.datetime.today()
+        "save dict {bookmark:[content, mark, count, time]}  "
         self._data = shelve.open(dbFile)
         if not apath:  # 如果没有提供apath值，默认保持当前目录路径。 参数apath 是个列表
             self._data[bookmark] = [os.path.abspath(os.getcwd()),'path',0, time.ctime()]
@@ -112,34 +113,34 @@ cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
     def list_bookmarks(self):  # 展示所有保存到书签
         "display the paths marked"
         self._data = shelve.open(dbFile)
-        
-        print("-"*70)
+        columns =  os.get_terminal_size()[0]  # 获取终端列宽度
+        print("-"*columns)
         print("{:16}    {:16}".format("Bookmarks", "Locations"))
-        print("-"*70)
+        print("-"*columns)
         if not self._data:
             print("-"*columns)
             print("Empty bookmark! 'cdx -s bookmark [dirpath]' to save a bookmark.")
-        # columns =  os.get_terminal_size()[0]
-        Cdx.listEven(self,'path')
-        Cdx.listEven(self,'url')
-        Cdx.listEven(self,'note')
+        else:
+            Cdx.listEven(self,'path','gold','purple')
+            Cdx.listEven(self,'url','blue','notes')
+            Cdx.listEven(self,'note','gold','blue')
         self._data.close()
     
 
-    def listEven(self,even):
+    def listEven(self,mark,color1, color2):
         columns =  os.get_terminal_size()[0]
         for k, v in self._data.items():
-            if v[1] == even:
-                if platform == 'linux':
+            if v[1] == mark:  # 根据mark [path, url, note] 选择打印内容
+                if platform == 'linux':  # 如果是Linux平台，则使用色彩打印字体
                     if len(v[0]) <= columns-20:
-                        print('{0}{1:10}{2}    {3}{4}{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[0], colours['end']))
+                        print('{0}{1:10}{2}    {3}{4}{5}'.format(colours[color1], k, colours['end'], colours[color2], v[0], colours['end']))
                     else:
-                        print('{0}{1:10}{2}    {3}{4}...{5}'.format(colours['gold'], k, colours['end'], colours['blue'], v[0][:(columns-20)], colours['end']))
-                else:
+                        print('{0}{1:10}{2}    {3}{4}...{5}'.format(colours[color1], k, colours['end'], colours[color2], v[0][:(columns-20)], colours['end']))
+                else:  # 非linux平台，不使用色彩打印
                     if len(v[0]) <= columns-20:
-                        print('{0:10}    {1}'.format(k, v))
+                        print('{0:10}    {1}'.format(k, v[0]))
                     else:
-                        print('{0:10}    {1}...'.format(k, v[:(columns-20)]))
+                        print('{0:10}    {1}...'.format(k, v[0][:(columns-20)]))
                 print("-"*columns)
 
 
@@ -147,31 +148,29 @@ cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
         "cd to the location path marked"
         self._data = shelve.open(dbFile)
 
-        if bookmark in self._data.keys():
-            if not self._data[bookmark][0].startswith('http'):
-                if os.path.exists(self._data[bookmark][0]):
-                    os.chdir(self._data[bookmark][0])
-                    self._data[bookmark][2] += 1
-                    self._data.close()
+        if bookmark in self._data.keys():  #　如果书签在数据库字典里
+            if not self._data[bookmark][0].startswith('http'): # 简单判断书签是否http开头，如果不是，
+                if os.path.exists(self._data[bookmark][0]):  # 假设是路径的话
+                    os.chdir(self._data[bookmark][0]) # 直接转向路径目录
+                    self._data[bookmark][2] += 1  # 该路径调用计数+１
+                    self._data.close()  # 关闭数据库
                     os.system(shell)
                 else:
                     print(self._data[bookmark][0])
                     self._data[bookmark][2] += 1
             else:
-                webbrowser.open(self._data[bookmark][0])
-                self._data[bookmark][2] += 1
+                webbrowser.open(self._data[bookmark][0]) # 直接用浏览器打开ｕｒｌ
+                self._data[bookmark][2] += 1 #调用计数+1
                 self._data.close()
-                if platform == 'linux':
+                if platform == 'linux': # 如果是linux，重新打开终端
                     os.system(shell) 
-        else:
+        else: # 如果不是存储的bookmark, 取决与内容是否属于路径或者url
             if os.path.exists(bookmark):
                 os.chdir(bookmark)
-                self._data[bookmark][2] += 1
                 self._data.close()
                 os.system(shell)
-            elif bookmark.startswith('http'):
+            elif bookmark.startswith('http'):  #url
                 webbrowser.open(bookmark)
-                self._data[bookmark][2] += 1
                 self._data.close()
                 if platform == 'linux':
                     os.system(shell)
@@ -193,6 +192,8 @@ cdx -d bookmark1 bookmark2 ...               # delete a bookmark (also --delete)
             self._data.close()
         except Exception:
             Cdx.list_bookmarks(self)
+
+
     def dalete(self, bookmarks):
         "delete bookmark"
         self._data = shelve.open(dbFile)
@@ -237,21 +238,15 @@ def main():
         print(err)
         sys.exit(2)
 
-    for name, value in opts:
+    for name, value in opts: # opts =(name,value),eg.-s bookmark, and name = -s, value = bookmark
         if name in ("-h", "--help"):
             cdx_go.usage()
             sys.exit(0)
         elif name in ('-s', '--save'):
-            if name == '-s':
-                if not args:
-                    cdx_go.save(value)
-                else:
-                    cdx_go.save(value, args)
-            if name == '--save':
-                if value and not args:
-                    cdx_go.save(value)
-                elif value and args:
-                    cdx_go.save(value, args)
+            if value and not args:
+                cdx_go.save(value)
+            elif value and args:
+                cdx_go.save(value, args)
             sys.exit(0)
         elif name in ('-l', '--list'):
             cdx_go.list_bookmarks()
